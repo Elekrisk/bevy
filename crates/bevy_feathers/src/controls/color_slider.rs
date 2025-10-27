@@ -242,44 +242,40 @@ pub fn color_slider(props: ColorSliderProps) -> impl Scene {
                 MaterialNode::<AlphaPatternMaterial>(Handle::default())
                 [
                     // Left endcap
-                    (
-                        ColorSliderEndCap
-                        Node {
-                            width: Val::Px({THUMB_SIZE * 0.5}),
-                        }
-                        template_value(RoundedCorners::Left.to_border_radius(TRACK_RADIUS))
-                    ),
+                    ColorSliderEndCap
+                    Node {
+                        width: Val::Px({THUMB_SIZE * 0.5}),
+                    }
+                    template_value(RoundedCorners::Left.to_border_radius(TRACK_RADIUS))
+                    ---
                     // Track with gradient
-                    (
-                        ColorSliderGradient
-                        Node {
-                            flex_grow: 1.0,
+                    ColorSliderGradient
+                    Node {
+                        flex_grow: 1.0,
+                    }
+                    ZIndex(1)
+                    [(
+                        SliderThumb
+                        ColorSliderThumb
+                        BorderRadius::MAX
+                        BorderColor::all(palette::WHITE)
+                        Outline {
+                            width: Val::Px(1.),
+                            offset: Val::Px(0.),
+                            color: palette::BLACK
                         }
-                        ZIndex(1)
-                        [(
-                            SliderThumb
-                            ColorSliderThumb
-                            BorderRadius::MAX
-                            BorderColor::all(palette::WHITE)
-                            Outline {
-                                width: Val::Px(1.),
-                                offset: Val::Px(0.),
-                                color: palette::BLACK
-                            }
-                            UiTransform::from_translation(Val2::new(
-                                Val::Percent(-50.0),
-                                Val::Percent(-50.0),
-                            ))
-                        )]
-                    ),
+                        UiTransform::from_translation(Val2::new(
+                            Val::Percent(-50.0),
+                            Val::Percent(-50.0),
+                        ))
+                    )]
+                    ---
                     // Right endcap
-                    (
-                        ColorSliderEndCap
-                        Node {
-                            width: Val::Px({THUMB_SIZE * 0.5}),
-                        }
-                        template_value(RoundedCorners::Right.to_border_radius(TRACK_RADIUS))
-                    ),
+                    ColorSliderEndCap
+                    Node {
+                        width: Val::Px({THUMB_SIZE * 0.5}),
+                    }
+                    template_value(RoundedCorners::Right.to_border_radius(TRACK_RADIUS))
                 ]
             )
         ]

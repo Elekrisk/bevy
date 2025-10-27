@@ -135,7 +135,8 @@ pub fn menu_button(props: MenuButtonProps) -> impl Scene {
             commands.trigger(MenuEvent { source: ev.entity, action: MenuAction::Toggle });
         })
         [
-            :icon(icons::CHEVRON_DOWN),
+            :icon(icons::CHEVRON_DOWN)
+            ---
             Node {
                 flex_grow: 0.2,
             }

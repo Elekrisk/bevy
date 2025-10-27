@@ -65,9 +65,11 @@ fn base() -> impl Scene {
         })
         Foo(100, @"asset://branding/bevy_bird_dark.png")
         [
-            (:sprite_big Sprite { size: 2 }),
-            :widget(bsn_list![Text::new("hi")]),
-            {sprites},
+            :sprite_big Sprite { size: 2 }
+            ---
+            :widget(bsn_list![Text::new("hi")])
+            ---
+            {sprites}
         ]
     }
 }

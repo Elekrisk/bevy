@@ -6,13 +6,7 @@ use crate::bsn::types::{
 use proc_macro2::{Delimiter, TokenStream, TokenTree};
 use quote::quote;
 use syn::{
-    braced, bracketed,
-    buffer::Cursor,
-    parenthesized,
-    parse::{Parse, ParseBuffer, ParseStream},
-    spanned::Spanned,
-    token::{At, Brace, Bracket, Colon, Comma, Paren},
-    Block, Expr, Ident, Lit, LitStr, Path, Result, Token,
+    Block, Expr, Ident, Lit, LitStr, Path, Result, Token, braced, bracketed, buffer::Cursor, custom_punctuation, parenthesized, parse::{Parse, ParseBuffer, ParseStream}, spanned::Spanned, token::{At, Brace, Bracket, Colon, Comma, Paren}
 };
 
 /// Functionally identical to [`Punctuated`](syn::punctuated::Punctuated), but fills the given `$list` Vec instead
@@ -52,7 +46,7 @@ impl<const ALLOW_FLAT: bool> Parse for Bsn<ALLOW_FLAT> {
             if ALLOW_FLAT {
                 while !input.is_empty() {
                     entries.push(input.parse::<BsnEntry>()?);
-                    if input.peek(Comma) {
+                    if input.peek(TrippleDash) {
                         // Not ideal, but this anticipatory break allows us to parse non-parenthesized
                         // flat Bsn entries in SceneLists
                         break;
@@ -160,6 +154,8 @@ impl Parse for BsnEntry {
     }
 }
 
+custom_punctuation!(TrippleDash, ---);
+
 impl Parse for BsnSceneList {
     fn parse(input: ParseStream) -> Result<Self> {
         let content;
@@ -171,7 +167,7 @@ impl Parse for BsnSceneList {
 impl Parse for BsnSceneListItems {
     fn parse(input: ParseStream) -> Result<Self> {
         let mut scenes = Vec::new();
-        parse_punctuated_vec!(scenes, input, BsnSceneListItem, Comma);
+        parse_punctuated_vec!(scenes, input, BsnSceneListItem, TrippleDash);
         Ok(BsnSceneListItems(scenes))
     }
 }
@@ -362,7 +358,7 @@ impl Parse for BsnValue {
         } else if input.peek(Ident) {
             let forked = input.fork();
             let path = forked.parse::<Path>()?;
-            if path.segments.len() == 1 && (forked.is_empty() || forked.peek(Comma)) {
+            if path.segments.len() == 1 && (forked.is_empty() || forked.peek(Comma) || forked.peek(TrippleDash)) {
                 return Ok(BsnValue::Ident(input.parse::<Ident>()?));
             }
             match PathType::new(&path) {

@@ -57,7 +57,7 @@ fn setup(mut commands: Commands) {
             BorderColor::all(Color::WHITE)
             BorderRadius::all(px(10))
             [
-                Text::new("virtual keyboard"),
+                Text::new("virtual keyboard")---
                 (
                     virtual_keyboard(layout.into_iter())
                     on(on_virtual_key_pressed)
