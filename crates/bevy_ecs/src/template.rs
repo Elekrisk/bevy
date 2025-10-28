@@ -237,11 +237,19 @@ pub enum EntityReference<'a> {
         /// The index that uniquely identifies the entity within the current scope.
         index: usize,
     },
+    /// An actual [`Entity`]
+    Entity(Entity)
 }
 
 impl<'a> Default for EntityReference<'a> {
     fn default() -> Self {
         Self::Path(Default::default())
+    }
+}
+
+impl<'a> From<Entity> for EntityReference<'a> {
+    fn from(value: Entity) -> Self {
+        Self::Entity(value)
     }
 }
 
@@ -253,6 +261,7 @@ impl Template for EntityReference<'static> {
             EntityReference::Path(entity_path) => context.entity.resolve_path(entity_path)?,
             // unwrap is ok as this is "internals". when implemented correctly this will never panic
             EntityReference::Index { scope, index } => context.get_scoped_entity(*scope, *index),
+            EntityReference::Entity(entity) => *entity
         })
     }
 }
