@@ -95,96 +95,92 @@ fn demo_root(state: &DemoWidgetStates) -> impl Scene {
                 width: Val::Percent(30.),
                 min_width: Val::Px(200.),
             } [
-                (
-                    button(ButtonProps::default())
-                    on(|_: On<Activate>| {
-                        info!("Button clicked!");
-                    })
-                    [(Text("Click me!") ThemedText)]
-                ),
-                (
-                    checkbox()
-                    on(checkbox_self_update)
-                    [(Text("Checkbox") ThemedText)]
-                ),
-                (
-                    Node {
-                        display: Display::Flex,
-                        flex_direction: FlexDirection::Column,
-                        row_gap: Val::Px(4.0),
-                    }
-                    RadioGroup
-                    // Update radio button states based on notification from radio group.
-                    on(
-                        |value_change: On<ValueChange<Entity>>,
-                         q_radio: Query<Entity, With<RadioButton>>,
-                         mut commands: Commands| {
-                            for radio in q_radio.iter() {
-                                if radio == value_change.value {
-                                    commands.entity(radio).insert(Checked);
-                                } else {
-                                    commands.entity(radio).remove::<Checked>();
-                                }
+                
+                button(ButtonProps::default())
+                on(|_: On<Activate>| {
+                    info!("Button clicked!");
+                })
+                [(Text("Click me!") ThemedText)]
+                ---
+                checkbox()
+                on(checkbox_self_update)
+                [(Text("Checkbox") ThemedText)]
+                ---
+                Node {
+                    display: Display::Flex,
+                    flex_direction: FlexDirection::Column,
+                    row_gap: Val::Px(4.0),
+                }
+                RadioGroup
+                // Update radio button states based on notification from radio group.
+                on(
+                    |value_change: On<ValueChange<Entity>>,
+                        q_radio: Query<Entity, With<RadioButton>>,
+                        mut commands: Commands| {
+                        for radio in q_radio.iter() {
+                            if radio == value_change.value {
+                                commands.entity(radio).insert(Checked);
+                            } else {
+                                commands.entity(radio).remove::<Checked>();
                             }
                         }
-                    )
-                    [
-                        radio() [ (Text("One") ThemedText) ],
-                        radio() [ (Text("Two") ThemedText) ],
-                    ]
-                ),
-                (toggle_switch() on(checkbox_self_update)),
+                    }
+                )
+                [
+                    radio() [ (Text("One") ThemedText) ]
+                    ---
+                    radio() [ (Text("Two") ThemedText) ]
+                ]
+                ---
+                toggle_switch() on(checkbox_self_update)
+                ---
                 Node {
                     flex_direction: FlexDirection::Column,
                     row_gap: Val::Px(4.0),
                 } [
                     // Uncontrolled/self-updating slider (the slider widget owns the state)
-                    (
-                        slider(SliderProps {
-                            max: 1.0,
-                            ..default()
-                        })
-                        on(slider_self_update)
-                        SliderStep(0.1)
-                        SliderPrecision(3)
-                    ),
+                    slider(SliderProps {
+                        max: 1.0,
+                        ..default()
+                    })
+                    on(slider_self_update)
+                    SliderStep(0.1)
+                    SliderPrecision(3)
+                    ---
                     // Controlled slider (the caller owns the state)
-                    (
-                        slider(SliderProps {
-                            max: 100.0,
-                            ..default()
-                        })
-                        on(|change: On<ValueChange<f32>>, mut state: ResMut<DemoWidgetStates>| {
-                            state.controlled_slider_value = change.value;
-                        })
-                        SliderValue(controlled_slider_value)
-                        SliderStep(10.)
-                        SliderPrecision(2)
-                    ),
-                    (
-                        Node {
-                            justify_content: JustifyContent::SpaceBetween,
-                        } [
-                            Text("Hsl"),
-                            (color_swatch() BackgroundColor(hsl_color)),
-                        ]
-                    ),
+                    slider(SliderProps {
+                        max: 100.0,
+                        ..default()
+                    })
+                    on(|change: On<ValueChange<f32>>, mut state: ResMut<DemoWidgetStates>| {
+                        state.controlled_slider_value = change.value;
+                    })
+                    SliderValue(controlled_slider_value)
+                    SliderStep(10.)
+                    SliderPrecision(2)
+                    ---
+                    Node {
+                        justify_content: JustifyContent::SpaceBetween,
+                    } [
+                        Text("Hsl")
+                        ---
+                        (color_swatch() BackgroundColor(hsl_color))
+                    ]
+                    ---
                     // Controlled color slider
-                    (
-                        color_slider(
-                            ColorSliderProps {
-                                channel: ColorChannel::HslHue,
-                                ..default()
-                            }
-                        )
-                        on(|change: On<ValueChange<f32>>, mut color: ResMut<DemoWidgetStates>| {
-                            color.hsl_color.hue = change.value;
-                        })
-                        SliderValue({hsl_color.hue})
-                    ),
+                    color_slider(
+                        ColorSliderProps {
+                            channel: ColorChannel::HslHue,
+                            ..default()
+                        }
+                    )
+                    on(|change: On<ValueChange<f32>>, mut color: ResMut<DemoWidgetStates>| {
+                        color.hsl_color.hue = change.value;
+                    })
+                    SliderValue({hsl_color.hue})
                 ]
-            ],
-
+            ]
+            ---
             :todos
         ]
     }
@@ -198,20 +194,25 @@ fn todos() -> impl Scene {
                 row_gap: Val::Px(8.0),
                 padding: UiRect::all(Val::Px(8.0)),
             } [
-                Text("Today"),
-                #A :todo_item("Write BSN"),
-                #B :todo_item("Hot reload it!") DependsOn(#A),
-                #C :todo_item("Add checkboxes"),
-                #D :todo_item("Try some styling"),
-                #E :todo_item("Move things around"),
-            ],
-
+                Text("Today")
+                ---
+                #A :todo_item("Write BSN")
+                ---
+                #B :todo_item("Hot reload it!") DependsOn(#A)
+                ---
+                #C :todo_item("Add checkboxes")
+                ---
+                #D :todo_item("Try some styling")
+                ---
+                #E :todo_item("Move things around")
+            ]
+            ---
             Node {
                 flex_direction: FlexDirection::Column,
                 row_gap: Val::Px(8.0),
                 padding: UiRect::all(Val::Px(8.0)),
             } [
-                Text("Tomorrow"),
+                Text("Tomorrow")
             ]
         ]
     }
